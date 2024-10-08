@@ -64,11 +64,11 @@ const issueBook = async (req, res) => {
         const bookIssued = await issueBook.save();
 
         if (bookIssued) {
-            const updateStock = await Book.findByIdAndUpdate(bookId, { $inc: { currentStock: -1 } });
+            const updateStock = await Book.findByIdAndUpdate(bookId, { $inc: { currentStock: -1, noOfTimesRented: 1 } });
             const updateBooksAssigned = await User.findByIdAndUpdate(userId, { $inc: { books_assigned: 1 } });
 
             if (updateStock && updateBooksAssigned) {
-                return res.status(200).json({ message: "Book issued successfully!" });
+                return res.status(200).json({ message: "Book issued successfully!", bookData: bookIssued });
             } else {
                 return res.status(500).json({ message: "Failed to update book stock or user assignments." });
             }
